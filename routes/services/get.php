@@ -1,85 +1,22 @@
 <?php
 
+require_once('./controllers/get.controller.php');
 
-require_once('connection.php');
-
-class GetModel
-{
-    //Peticion a la base de datos sin filto
-    static public function getData($table, $select, $order, $ordermode, $limit)
-    {
-
-        $selectArray = explode(",", $select);
-
-        //Se valida que la tabla exista
-        if (empty(Connection::getTable($table, $selectArray))) {
-            return null;
-        }
-
-        //Se valida que la peticion tenga limites
-        if ($limit != null) {
-            $limitArray = explode(',', $limit);
-        }
-
-        $sql = "SELECT $select FROM $table";
-
-        //Se valida que la peticion tenga orden
-        $sql .= $order != null && $ordermode != null ? " ORDER BY $order $ordermode" : '';
-        $sql .= $limit != null  ? " LIMIT $limitArray[0], $limitArray[1]" : '';
+//parametros de validacion y consultas
+$select = isset($_GET['select']) ?  $_GET['select'] : '*';
+$order = isset($_GET['order']) ?  $_GET['order'] :  null;
+$ordermode = isset($_GET['ordermode']) ?  $_GET['ordermode'] :  null;
+$limit = isset($_GET['limit']) ?  $_GET['limit'] :  null;
 
 
 
-        $stmt = Connection::connect()->prepare($sql);
-        $stmt->execute();
+$response = new  GetController();
 
-        //response
-        return $stmt->fetchAll(PDO::FETCH_CLASS);
-    }
+    //peticiones con filtro
+if (isset($_GET['to']) && isset($_GET['tovalue'])) {
+    $response->getDataFilter($table, $select, $_GET['to'], $_GET['tovalue'], $order, $ordermode, $limit);
 
-    //Peticion a la base de datos sin filto
-    static public function getDataFilter($table, $select, $to, $tovalue, $order, $ordermode, $limit)
-    {
-        $selectArray = explode(",", $select);
-        //Se valida que la tabla exista
-        if (empty(Connection::getTable($table, $selectArray))) {
-            return null;
-        }
-
-        //Se convierte en array el parametro to y tovalue separados por una "," desconmponiendo los parametros
-        $toArray = explode(',', $to);
-        $tovalueArray = explode(',', $tovalue);
-        $tofiltertext = '';
-
-        //Se valida que la peticion tenga limites
-        if ($limit != null) {
-            $limitArray = explode(',', $limit);
-        }
-
-        //Se valida que tenga mas de un parametro de filtro y se recorren para generar la consulta completa
-        if (count($toArray) > 1) {
-            foreach ($toArray as $key => $value) {
-                # code...
-                if ($key > 0) {
-                    $tofiltertext .= "AND $value = :$value ";
-                }
-            }
-        }
-
-        $sql = "SELECT $select FROM $table WHERE $toArray[0] = :$toArray[0] $tofiltertext";
-
-        //Se valida que la peticion tenga orden
-        $sql .= $order != null && $ordermode != null ? " ORDER BY $order $ordermode" : '';
-        $sql .= $limit != null  ? " LIMIT $limitArray[0], $limitArray[1]" : '';
-        $stmt = Connection::connect()->prepare($sql);
-
-        //se recorren los valores enviados para parametrizarlos
-        foreach ($toArray as $key => $value) {
-            $stmt->bindParam(":" . $value, $tovalueArray[$key], PDO::PARAM_STR);
-        }
-
-        $stmt->execute();
-
-        //response
-        return $stmt->fetchAll(PDO::FETCH_CLASS);
-    }
+    //peticiones sin filtro
+} else {
+    $response->getData($table, $select, $order, $ordermode, $limit);
 }
