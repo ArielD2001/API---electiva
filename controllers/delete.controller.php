@@ -8,8 +8,7 @@ class DeleteController {
     /**
      * Método estático para eliminar datos de la base de datos.
      *
-     * @param int|string $id     ID del registro a eliminar.
-     * @param string     $table  Nombre de la tabla en la base de datos.
+     
      */
     static public function deleteData($id, $table) {
       
