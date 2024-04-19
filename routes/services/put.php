@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
     if (empty(Connection::getTable($table, $columns))) {
         $json = array(
             "status" => 400,
-            "results" => 'Error: fields in the form do not match the databases',
+            "results" => 'Not Found',
             "method" => 'post'
         );
         echo json_encode($json, http_response_code($json['status']));
