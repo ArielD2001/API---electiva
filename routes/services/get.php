@@ -8,8 +8,6 @@ $order = isset($_GET['order']) ?  $_GET['order'] :  null;
 $ordermode = isset($_GET['ordermode']) ?  $_GET['ordermode'] :  null;
 $limit = isset($_GET['limit']) ?  $_GET['limit'] :  null;
 
-
-
 $response = new  GetController();
 
     //peticiones con filtro
