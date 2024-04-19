@@ -4,6 +4,8 @@ require_once('models/connection.php');
 require('controllers/post.controller.php');
 
 if(isset($_POST)){
+    print_r($_POST);
+    return;
     $columns = array();
 
     foreach (array_keys($_POST) as $key => $value) {
