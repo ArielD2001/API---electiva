@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
     if (empty(Connection::getTable($table, $columns))) {
         $json = array(
             "status" => 400,
-            "results" => 'Not Found',
+            "results" => 'Not Founn',
             "method" => 'post'
         );
         echo json_encode($json, http_response_code($json['status']));
